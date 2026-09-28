@@ -1,0 +1,77 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+
+class Solution {
+public:
+
+    ListNode* reverse(ListNode* head) {
+        ListNode* prev = nullptr;
+        ListNode* curr = head;
+        ListNode* aux;
+
+        while(curr != nullptr) {
+            aux = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = aux;
+        }
+
+        return prev;
+    }
+
+    void merge(ListNode* l1, ListNode* l2) {
+
+        ListNode* next1;
+        ListNode* next2;
+        ListNode* prev;
+
+        while(l1 != nullptr && l2 != nullptr) {
+
+            //Keep the original lists next nodes
+            next1 = l1->next;
+            next2 = l2->next;
+
+            // Does the swapping/zigzag
+            l1->next = l2;
+            l2->next = next1;
+
+            //Points to the latest 'processed' node
+            //So we can connect to the remaining nodes
+            //Of the non-empty half
+            prev = l2;
+
+            l1 = next1;
+            l2 = next2;
+        }
+
+        if(l1 != nullptr) prev->next = l1;
+        if(l2 != nullptr) prev->next = l2;
+    }
+
+    void reorderList(ListNode* head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+        ListNode* prev;
+
+        while(fast != nullptr && fast->next != nullptr) {
+            prev = slow;
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        if(prev != nullptr) prev->next = nullptr;
+
+        ListNode* second_half_head = reverse(slow);
+
+        merge(head, second_half_head);
+
+    }
+};
